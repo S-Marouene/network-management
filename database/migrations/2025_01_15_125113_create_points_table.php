@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('devices', function (Blueprint $table) {
+        Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->decimal('x', 10, 2); // X coordinate
             $table->decimal('y', 10, 2); // Y coordinate
-            $table->string('device_type'); // Device type
-            $table->string('device_icon');
-            $table->string('device_image');
+            $table->foreignId('device_id')->constrained('devices')->onDelete('cascade');
             $table->timestamps(); // Created and updated timestamps
         });
     }

@@ -109,18 +109,6 @@
                         </a>
                     </li>
 
-                    {{--<li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['leaflet-test'])){{ 'bg-slate-900' }}@endif">
-                        <a class="block text-slate-200 hover:text-white truncate transition duration-150 @if(in_array(Request::segment(1), ['inbox'])){{ 'hover:text-slate-200' }}@endif"
-                        @if(Route::is('leaflet-test')){{ '!text-indigo-500' }}@endif" href="{{ route('leaflet-test') }}" wire:navigate>
-                        <div class="flex items-center">
-                            <svg class="shrink-0 h-6 w-6" viewBox="0 0 24 24">
-                                <path class="fill-current @if(in_array(Request::segment(1), ['leaflet-test'])){{ 'text-indigo-500' }}@else{{ 'text-slate-600' }}@endif" d="M16 13v4H8v-4H0l3-9h18l3 9h-8Z" />
-                                <path class="fill-current @if(in_array(Request::segment(1), ['leaflet-test'])){{ 'text-indigo-300' }}@else{{ 'text-slate-400' }}@endif" d="m23.72 12 .229.686A.984.984 0 0 1 24 13v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-8c0-.107.017-.213.051-.314L.28 12H8v4h8v-4H23.72ZM13 0v7h3l-4 5-4-5h3V0h2Z" />
-                            </svg>
-                            <span class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Leaflet</span>
-                        </div>
-                        </a>
-                    </li>--}}
                     <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['leaflet-test'])){{ 'bg-slate-900' }}@endif">
                         <a class="block text-slate-200 hover:text-white truncate transition duration-150 @if(in_array(Request::segment(1), ['inbox'])){{ 'hover:text-slate-200' }}@endif"
                         @if(Route::is('leaflet-test')){{ '!text-indigo-500' }}@endif"
@@ -136,8 +124,23 @@
                         </a>
                     </li>
 
+                    <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['devices.show'])){{ 'bg-slate-900' }}@endif">
+                        <a class="block text-slate-200 hover:text-white truncate transition duration-150 @if(in_array(Request::segment(1), ['inbox'])){{ 'hover:text-slate-200' }}@endif"
+                        @if(Route::is('devices.show')){{ '!text-indigo-500' }}@endif"
+                        href="{{ route('devices.show') }}"
+                        wire:navigate> <!-- Use wire:navigate for Livewire navigation -->
+                        <div class="flex items-center">
+                            <svg class="shrink-0 h-6 w-6" viewBox="0 0 24 24">
+                                <path class="fill-current @if(in_array(Request::segment(1), ['leaflet-test'])){{ 'text-indigo-500' }}@else{{ 'text-slate-600' }}@endif" d="M16 13v4H8v-4H0l3-9h18l3 9h-8Z" />
+                                <path class="fill-current @if(in_array(Request::segment(1), ['leaflet-test'])){{ 'text-indigo-300' }}@else{{ 'text-slate-400' }}@endif" d="m23.72 12 .229.686A.984.984 0 0 1 24 13v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1v-8c0-.107.017-.213.051-.314L.28 12H8v4h8v-4H23.72ZM13 0v7h3l-4 5-4-5h3V0h2Z" />
+                            </svg>
+                            <span class="text-sm font-medium ml-3 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">Devices</span>
+                        </div>
+                        </a>
+                    </li>
+
                     <!-- Tasks -->
-                    <li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['tasks'])){{ 'bg-slate-900' }}@endif" x-data="{ open: {{ in_array(Request::segment(1), ['tasks']) ? 1 : 0 }} }">
+                    {{--<li class="px-3 py-2 rounded-sm mb-0.5 last:mb-0 @if(in_array(Request::segment(1), ['tasks'])){{ 'bg-slate-900' }}@endif" x-data="{ open: {{ in_array(Request::segment(1), ['tasks']) ? 1 : 0 }} }">
                         <a class="block text-slate-200 hover:text-white truncate transition duration-150 @if(in_array(Request::segment(1), ['tasks'])){{ 'hover:text-slate-200' }}@endif" href="#0" @click.prevent="sidebarExpanded ? open = !open : sidebarExpanded = true">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
@@ -325,11 +328,11 @@
                                 </li>
                             </ul>
                         </div>
-                    </li>
+                    </li>--}}
                 </ul>
             </div>
             <!-- More group -->
-            <div>
+            {{--<div>
                 <h3 class="text-xs uppercase text-slate-500 font-semibold pl-3">
                     <span class="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">•••</span>
                     <span class="lg:hidden lg:sidebar-expanded:block 2xl:block">More</span>
@@ -520,7 +523,7 @@
                         </div>
                     </li>
                 </ul>
-            </div>
+            </div>--}}
         </div>
 
         <!-- Expand / collapse button -->

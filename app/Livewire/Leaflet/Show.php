@@ -13,9 +13,7 @@ class Show extends Component
 
     public function mount()
     {
-        $this->dispatch('initialize-map');
-
-        // Fetch all devices from the database
+        /*$this->dispatch('initialize-map');*/
         $this->devices = devices::all();
     }
 

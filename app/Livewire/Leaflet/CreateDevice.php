@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Livewire\Leaflet;
-
-use App\Models\devices;
+use App\Models\Points;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -10,7 +9,7 @@ class CreateDevice extends Component
 {
     public $x;
     public $y;
-    public $device_type;
+    public $device_id;
 
     #[On('save-coordinates')]
     public function setCoordinates($x, $y)
@@ -24,15 +23,15 @@ class CreateDevice extends Component
         $this->validate([
             'x' => 'required|numeric',
             'y' => 'required|numeric',
-            'device_type' => 'required|string',
+            'device_id' => 'required|string',
         ]);
-        devices::insert([
+        Points::insert([
             'x' => $this->x,
             'y' => $this->y,
-            'device_type' => $this->device_type,
+            'device_id' => $this->device_id,
         ]);
 
-        $this->reset(['x', 'y', 'device_type']);
+        $this->reset(['x', 'y', 'device_id']);
         $this->dispatch('device-saved');
     }
 

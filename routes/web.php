@@ -1,5 +1,6 @@
 <?php
 
+use App\Livewire\Devices\Edit;
 use App\Livewire\Leaflet\Show;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,12 @@ Route::get('/test', function () {
 })->name('test');
 
 Route::get('/leaflet-test', Show::class)->name('leaflet-test');
+
+
+Route::get('/devices.show', App\Livewire\Devices\Show::class)->name('devices.show');
+Route::get('/devices/{id}/edit', Edit::class)->name('devices.edit');
+
+
 
 Route::middleware([
     'auth:sanctum',
