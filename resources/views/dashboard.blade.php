@@ -33,7 +33,7 @@
 
         <!-- Cards -->
         <div class="grid grid-cols-12 gap-6">
-
+            <livewire:devices.show />
             {{--<!-- Line chart (Acme Plus) -->
             <x-dashboard.dashboard-card-01 :dataFeed="$dataFeed" />
 
@@ -62,7 +62,7 @@
             <x-dashboard.dashboard-card-09 />
 
             <!-- Card (Customers)  -->
-            <x-dashboard.dashboard-card-10 />
+
 
             <!-- Card (Reasons for Refunds)   -->
             <x-dashboard.dashboard-card-11 />

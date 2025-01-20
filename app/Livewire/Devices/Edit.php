@@ -5,17 +5,16 @@ use App\Models\Device;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Storage;
 
 class Edit extends Component
 {
 
-    use WithFileUploads; // Enable file uploads
+    use WithFileUploads;
 
-    public $device; // The device being edited
+    public $device;
     public $name;
     public $icon;
-    public $newIcon; // For handling file uploads
+    public $newIcon;
     public $type;
     public $description;
     public $status;
@@ -23,10 +22,9 @@ class Edit extends Component
     public $model;
     public $serial_number;
     #[Layout('layouts.app')]
-    // Mount the component with the device data
     public function mount($id)
     {
-        $this->device = Device::findOrFail($id); // Find the device by ID
+        $this->device = Device::findOrFail($id);
         $this->name = $this->device->name;
         $this->icon = $this->device->icon;
         $this->type = $this->device->type;
@@ -39,10 +37,9 @@ class Edit extends Component
 
     public function update()
     {
-        // Validate the input data
         $this->validate([
             'name' => 'required|string|max:255',
-            'newIcon' => 'nullable|image|max:2048', // Allow image upload (max 2MB)
+            'newIcon' => 'nullable|image|max:2048',
             'type' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|string|in:active,inactive',
@@ -51,29 +48,18 @@ class Edit extends Component
             'serial_number' => 'nullable|string|max:255',
         ]);
 
-        // Handle the icon upload
         if ($this->newIcon) {
-            // Delete the old icon if it exists
             if ($this->device->icon && \Storage::exists('public/icons/' . $this->device->icon)) {
                 \Storage::delete('public/icons/' . $this->device->icon);
             }
-
-            // Store the new icon
             $iconName = time() . '.' . $this->newIcon->getClientOriginalExtension();
-            if ($this->newIcon->storeAs('public/icons', $iconName)) {
-                \Log::info('File uploaded successfully.', ['file' => $iconName]);
-            } else {
-                \Log::error('File upload failed.', ['file' => $iconName]);
-            }
-
-            // Update the device's icon property
+            $this->newIcon->storeAs('public/icons', $iconName);
             $this->device->icon = $iconName;
         }
 
-        // Update the device with other fields
         $this->device->update([
             'name' => $this->name,
-            'icon' => $this->device->icon ?? $this->device->icon, // Use the new icon or keep the old one
+            'icon' => $this->device->icon ?? $this->device->icon,
             'type' => $this->type,
             'description' => $this->description,
             'status' => $this->status,
@@ -82,7 +68,6 @@ class Edit extends Component
             'serial_number' => $this->serial_number,
         ]);
 
-        // Show a success message
         session()->flash('message', 'Device updated successfully.');
     }
 
