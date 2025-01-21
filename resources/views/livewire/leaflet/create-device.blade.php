@@ -1,7 +1,6 @@
 <div>
     <div>
         <h1>Create Device </h1>
-
         <div class="form-container">
             <div>
                 <label for="x">X Coordinate:</label>
@@ -20,7 +19,7 @@
                     @endforeach
                 </select>
             </div>
-            <button class="btn btn-success" wire:click="saveDevice">Save Device</button>
+            <x-button class="btn btn-success" wire:click="saveDevice">Save Device</x-button>
         </div>
     </div>
 </div>

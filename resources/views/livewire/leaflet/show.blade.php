@@ -14,7 +14,7 @@
     <div
         x-data="mapComponent()"
         x-init="initMap()"
-        >
+    >
         <div id="map" style="width: 100%; height: 600px;"></div>
         <div class="form-container">
             <livewire:leaflet.create-device />
@@ -41,23 +41,27 @@
                 L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
                 this.map.fitBounds(imageBounds);
 
-                // Add layers
-                const switchLayer = L.layerGroup().addTo(this.map);
-                const routerLayer = L.layerGroup().addTo(this.map);
-                const priseLayer = L.layerGroup().addTo(this.map);
-                const overlayLayers = {
-                    "Switch": switchLayer,
-                    "Router": routerLayer,
-                    "Prise": priseLayer,
-                };
-                L.control.layers(null, overlayLayers).addTo(this.map);
 
+                const deviceSelect = document.getElementById('device_id');
+                const overlayLayers = {};
+                Array.from(deviceSelect.options).forEach(option => {
+                    if (option.value) {
+                        const match = option.text.match(/^(.*) \((.*)\)$/);
+                        if (match) {
+                            const name = match[1]; // Device name
+                            const type = match[2]; // Device type
+                            const layerKey = `${name} (${type})`; // Combine name and type for the layer key
+                            overlayLayers[layerKey] = L.layerGroup().addTo(this.map);
+                        }
+                    }
+                });
+
+                L.control.layers(null, overlayLayers).addTo(this.map);
                 if (this.points && this.points.length > 0) {
                     this.points.forEach(point => {
                         const { x, y, device } = point;
-
                         if (x !== undefined && y !== undefined && device) {
-                            if (!this.deviceIcons[device.type]) {
+                            if (!this.deviceIcons[device.icon]) {
                                 this.deviceIcons[device.type] = L.icon({
                                     iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
                                     iconSize: [32, 32],
@@ -73,22 +77,15 @@
                                     <b>IP Address:</b> ${device.ip_address}<br>
                                     <b>Model:</b> ${device.model}<br>
                                     <b>Serial Number:</b> ${device.serial_number}<br>
-                                    <b>Coordinates:</b> X: ${x}, Y: ${y}
+                                    <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
+                                    <b>icon:</b> ${device.icon}
                                 `;
-
                             marker.bindPopup(popupContent);
-
-                            switch (device.type) {
-                                case 'switch':
-                                    switchLayer.addLayer(marker);
-                                    break;
-                                case 'router':
-                                    routerLayer.addLayer(marker);
-                                    break;
-                                case 'prise':
-                                    priseLayer.addLayer(marker);
-                                    break;
+                            const layerKey = `${device.name} (${device.type})`;
+                            if (overlayLayers[layerKey]) {
+                                overlayLayers[layerKey].addLayer(marker);
                             }
+
                         }
                     });
                 }
@@ -102,24 +99,32 @@
                     Livewire.dispatch('save-coordinates', { x: x, y: y });
                 });
 
-                // Listen for Livewire events
                 Livewire.on('device-saved', (data) => {
                     const deviceData = data[0];
-                    const { x, y, device_type } = deviceData;
+                    const {x, y, device} = deviceData;
                     if (x !== undefined && y !== undefined) {
-                        console.log("Coordinates are defined!");
-                        const marker = L.marker([x, y], { icon: this.deviceIcons[device_type] });
-                        marker.bindPopup(`Device: ${device_type}<br>X: ${x}, Y: ${y}`);
-                        switch (device_type) {
-                            case 'switch':
-                                switchLayer.addLayer(marker);
-                                break;
-                            case 'router':
-                                routerLayer.addLayer(marker);
-                                break;
-                            case 'prise':
-                                priseLayer.addLayer(marker);
-                                break;
+                        if (!this.deviceIcons[device.icon]) {
+                            this.deviceIcons[device.type] = L.icon({
+                                iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
+                                iconSize: [32, 32],
+                                iconAnchor: [16, 32],
+                            });
+                        }
+                        const marker = L.marker([x, y], { icon: this.deviceIcons[device.type] });
+                        const popupContent = `
+                                    <b>Device Name:</b> ${device.name}<br>
+                                    <b>Type:</b> ${device.type}<br>
+                                    <b>Description:</b> ${device.description}<br>
+                                    <b>Status:</b> ${device.status}<br>
+                                    <b>IP Address:</b> ${device.ip_address}<br>
+                                    <b>Model:</b> ${device.model}<br>
+                                    <b>Serial Number:</b> ${device.serial_number}<br>
+                                    <b>Coordinates:</b> X: ${x}, Y: ${y}
+                                `;
+                        marker.bindPopup(popupContent);
+                        const layerKey = `${device.name} (${device.type})`;
+                        if (overlayLayers[layerKey]) {
+                            overlayLayers[layerKey].addLayer(marker);
                         }
                     } else {
                         console.log("Coordinates are undefined!");

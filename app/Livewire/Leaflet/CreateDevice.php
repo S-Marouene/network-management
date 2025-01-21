@@ -38,15 +38,12 @@ class CreateDevice extends Component
                 'device_id' => $this->device_id,
             ]);
 
-
             $device = Device::find($this->device_id);
-
-
 
             $this->dispatch('device-saved', [
                 'x' => $this->x,
                 'y' => $this->y,
-                'device_type' => $device->type, // Pass the device type
+                'device' => $device, // Pass the device type
             ]);
             $this->reset(['x', 'y', 'device_id']);
 
