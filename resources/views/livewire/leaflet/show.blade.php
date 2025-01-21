@@ -1,23 +1,27 @@
-<div >
+<div>
     <style>
         #map {
             width: 100%;
             height: 600px;
-        }
-        .form-container {
-            margin: 20px 0;
-        }
-        label {
-            margin-right: 10px;
+            padding: 0;
+            margin: 0;
         }
     </style>
-    <div
-        x-data="mapComponent()"
-        x-init="initMap()"
-    >
-        <div id="map" style="width: 100%; height: 600px;"></div>
-        <div class="form-container">
-            <livewire:leaflet.create-device />
+    <div class="container mx-auto p-4">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+            <!-- Map Section (80% width on large screens) -->
+            <div
+                x-data="mapComponent()"
+                x-init="initMap()"
+                class="lg:col-span-4"
+            >
+                <div id="map" style="width: 100%; height: 600px;"></div>
+            </div>
+
+            <!-- Create Device Form Section (20% width on large screens) -->
+            <div class="lg:col-span-1">
+                <livewire:leaflet.create-device />
+            </div>
         </div>
     </div>
 </div>
@@ -34,6 +38,11 @@
                     minZoom: -1,
                     maxZoom: 2
                 });
+                /*this.map.dragging.disable();
+                this.map.touchZoom.disable();
+                this.map.doubleClickZoom.disable();
+                this.map.scrollWheelZoom.disable();*/
+
                 const imageWidth = 700;
                 const imageHeight = 500;
                 const imageBounds = [[0, 0], [imageHeight, imageWidth]];
