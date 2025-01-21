@@ -14,7 +14,7 @@ class Points extends Model
      *
      * @var string
      */
-    protected $table = 'devices';
+    protected $table = 'points';
 
     /**
      * The attributes that are mass assignable.
@@ -24,10 +24,13 @@ class Points extends Model
     protected $fillable = [
         'x',
         'y',
-        'device_type',
-        'device_icon',
-        'device_image',
+        'device_id',
     ];
+
+    public function device()
+    {
+        return $this->belongsTo(Device::class);
+    }
 
     /**
      * The attributes that should be cast.

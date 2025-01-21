@@ -17,6 +17,7 @@ import dashboardCard08 from './components/dashboard-card-08';
 import dashboardCard09 from './components/dashboard-card-09';
 import dashboardCard11 from './components/dashboard-card-11';
 
+
 // Define Chart.js default settings
 /* eslint-disable prefer-destructuring */
 Chart.defaults.font.family = '"Inter", sans-serif';
@@ -48,40 +49,8 @@ Chart.register({
     },
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Light switcher
-    const lightSwitches = document.querySelectorAll('.light-switch');
+/*document.addEventListener('DOMContentLoaded', () => {
 
-    if (lightSwitches.length > 0) {
-        lightSwitches.forEach((lightSwitch, i) => {
-            if (localStorage.getItem('dark-mode') === 'true') {
-                lightSwitch.checked = true;
-            }
-            lightSwitch.addEventListener('change', () => {
-                const { checked } = lightSwitch;
-                lightSwitches.forEach((el, n) => {
-                    if (n !== i) {
-                        el.checked = checked;
-                    }
-                });
-                document.documentElement.classList.add('[&_*]:!transition-none');
-                if (lightSwitch.checked) {
-                    document.documentElement.classList.add('dark');
-                    document.querySelector('html').style.colorScheme = 'dark';
-                    localStorage.setItem('dark-mode', true);
-                    document.dispatchEvent(new CustomEvent('darkMode', { detail: { mode: 'on' } }));
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    document.querySelector('html').style.colorScheme = 'light';
-                    localStorage.setItem('dark-mode', false);
-                    document.dispatchEvent(new CustomEvent('darkMode', { detail: { mode: 'off' } }));
-                }
-                setTimeout(() => {
-                    document.documentElement.classList.remove('[&_*]:!transition-none');
-                }, 1);
-            });
-        });
-    }
     // Flatpickr
     flatpickr('.datepicker', {
         mode: 'range',
@@ -111,4 +80,4 @@ document.addEventListener('DOMContentLoaded', () => {
     dashboardCard08();
     dashboardCard09();
     dashboardCard11();
-});
+});*/

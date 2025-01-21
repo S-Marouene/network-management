@@ -12,7 +12,7 @@ Route::get('/test', function () {
     return view('livewire.test.show');
 })->name('test');
 
-Route::get('/leaflet-test', Show::class)->name('leaflet-test');
+Route::get('/network-show', Show::class)->name('network-show');
 
 
 Route::get('/devices.show', App\Livewire\Devices\Show::class)->name('devices.show');

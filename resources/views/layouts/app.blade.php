@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js" defer></script>
+
     <script
         src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
@@ -23,13 +26,22 @@
     @livewireStyles
 
     <script>
-        if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
+       /* if (localStorage.getItem('dark-mode') === 'false' || !('dark-mode' in localStorage)) {
             document.querySelector('html').classList.remove('dark');
             document.querySelector('html').style.colorScheme = 'light';
         } else {
             document.querySelector('html').classList.add('dark');
             document.querySelector('html').style.colorScheme = 'dark';
-        }
+        }*/
+       document.addEventListener('DOMContentLoaded', () => {
+           if (localStorage.getItem('dark-mode') === 'true') {
+               document.documentElement.classList.add('dark');
+               document.querySelector('html').style.colorScheme = 'dark';
+           } else {
+               document.documentElement.classList.remove('dark');
+               document.querySelector('html').style.colorScheme = 'light';
+           }
+       });
     </script>
 </head>
 <body

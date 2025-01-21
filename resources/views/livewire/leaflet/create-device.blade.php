@@ -12,12 +12,12 @@
                 <input type="text" id="y" wire:model="y" readonly>
             </div>
             <div>
-                <label for="device_type">Device Type:</label>
-                <select id="device_type" wire:model="device_type">
+                <label for="device_id">Device:</label>
+                <select id="device_id" wire:model="device_id">
                     <option value="">Select Device</option>
-                    <option value="switch">Switch</option>
-                    <option value="router">Router</option>
-                    <option value="prise">Prise</option>
+                    @foreach($devices as $device)
+                        <option value="{{ $device->id }}">{{ $device->name }} ({{ $device->type }})</option>
+                    @endforeach
                 </select>
             </div>
             <button class="btn btn-success" wire:click="saveDevice">Save Device</button>
