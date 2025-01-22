@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev/svgjs" width="32" height="32"><svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Gradient Definitions -->
+        <linearGradient id="SvgjsLinearGradient1003" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#4F46E5"></stop>
+            <stop offset="100%" stop-color="#9333EA"></stop>
+        </linearGradient>
+        <linearGradient id="SvgjsLinearGradient1002" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#3B82F6"></stop>
+            <stop offset="100%" stop-color="#1D4ED8"></stop>
+        </linearGradient>
+    </defs>
+
+    <!-- Background Circle -->
+    <circle cx="16" cy="16" r="16" fill="url(#gradient1)"></circle>
+
+    <!-- Central Node -->
+    <circle cx="16" cy="16" r="6" fill="url(#gradient2)"></circle>
+
+    <!-- Network Nodes -->
+    <circle cx="10" cy="10" r="2" fill="#FFFFFF"></circle>
+    <circle cx="22" cy="10" r="2" fill="#FFFFFF"></circle>
+    <circle cx="10" cy="22" r="2" fill="#FFFFFF"></circle>
+    <circle cx="22" cy="22" r="2" fill="#FFFFFF"></circle>
+
+    <!-- Connecting Lines -->
+    <line x1="10" y1="10" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1"></line>
+    <line x1="22" y1="10" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1"></line>
+    <line x1="10" y1="22" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1"></line>
+    <line x1="22" y1="22" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1"></line>
+</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
+@media (prefers-color-scheme: dark) { :root { filter: none; } }
+</style></svg>

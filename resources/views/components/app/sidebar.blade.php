@@ -27,21 +27,36 @@
             </button>
             <!-- Logo -->
             <a class="block" href="{{ route('dashboard') }}">
-                <svg width="32" height="32" viewBox="0 0 32 32">
+                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <linearGradient x1="28.538%" y1="20.229%" x2="100%" y2="108.156%" id="logo-a">
-                            <stop stop-color="#A5B4FC" stop-opacity="0" offset="0%" />
-                            <stop stop-color="#A5B4FC" offset="100%" />
+                        <!-- Gradient Definitions -->
+                        <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#4F46E5" />
+                            <stop offset="100%" stop-color="#9333EA" />
                         </linearGradient>
-                        <linearGradient x1="88.638%" y1="29.267%" x2="22.42%" y2="100%" id="logo-b">
-                            <stop stop-color="#38BDF8" stop-opacity="0" offset="0%" />
-                            <stop stop-color="#38BDF8" offset="100%" />
+                        <linearGradient id="gradient2" x1="100%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#3B82F6" />
+                            <stop offset="100%" stop-color="#1D4ED8" />
                         </linearGradient>
                     </defs>
-                    <rect fill="#6366F1" width="32" height="32" rx="16" />
-                    <path d="M18.277.16C26.035 1.267 32 7.938 32 16c0 8.837-7.163 16-16 16a15.937 15.937 0 01-10.426-3.863L18.277.161z" fill="#4F46E5" />
-                    <path d="M7.404 2.503l18.339 26.19A15.93 15.93 0 0116 32C7.163 32 0 24.837 0 16 0 10.327 2.952 5.344 7.404 2.503z" fill="url(#logo-a)" />
-                    <path d="M2.223 24.14L29.777 7.86A15.926 15.926 0 0132 16c0 8.837-7.163 16-16 16-5.864 0-10.991-3.154-13.777-7.86z" fill="url(#logo-b)" />
+
+                    <!-- Background Circle -->
+                    <circle cx="16" cy="16" r="16" fill="url(#gradient1)" />
+
+                    <!-- Central Node -->
+                    <circle cx="16" cy="16" r="6" fill="url(#gradient2)" />
+
+                    <!-- Network Nodes -->
+                    <circle cx="10" cy="10" r="2" fill="#FFFFFF" />
+                    <circle cx="22" cy="10" r="2" fill="#FFFFFF" />
+                    <circle cx="10" cy="22" r="2" fill="#FFFFFF" />
+                    <circle cx="22" cy="22" r="2" fill="#FFFFFF" />
+
+                    <!-- Connecting Lines -->
+                    <line x1="10" y1="10" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1" />
+                    <line x1="22" y1="10" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1" />
+                    <line x1="10" y1="22" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1" />
+                    <line x1="22" y1="22" x2="16" y2="16" stroke="#FFFFFF" stroke-width="1" />
                 </svg>
             </a>
         </div>
