@@ -25,6 +25,7 @@ class Points extends Model
         'x',
         'y',
         'device_id',
+        'network_id',
     ];
 
     public function device()
@@ -43,4 +44,16 @@ class Points extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
+
+    /**
+     * Scope a query to only include points for a specific network ID.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param int $networkId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForNetwork($query, $networkId)
+    {
+        return $query->where('network_id', $networkId);
+    }
 }

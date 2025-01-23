@@ -8,8 +8,9 @@
         }
     </style>
     <div class="container mx-auto p-4">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <!-- Map Section (80% width on large screens) -->
+        <h1 class="text-xl font-bold">{{ $network->name }}</h1>
+        <p>{{ $network->description }}</p>
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-6" wire:ignore>
             <div
                 x-data="mapComponent()"
                 x-init="initMap()"
@@ -18,9 +19,8 @@
                 <div id="map" style="width: 100%; height: 600px;"></div>
             </div>
 
-            <!-- Create Device Form Section (20% width on large screens) -->
             <div class="lg:col-span-1">
-                <livewire:leaflet.create-device />
+                <livewire:points.create-point :networkId="$network->id" />
             </div>
         </div>
     </div>
@@ -35,21 +35,15 @@
             initMap() {
                 this.map = L.map('map', {
                     crs: L.CRS.Simple,
-                    minZoom: -1,
-                    maxZoom: 2
+                    minZoom: 0,
+                    maxZoom: 1
                 });
-                /*this.map.dragging.disable();
-                this.map.touchZoom.disable();
-                this.map.doubleClickZoom.disable();
-                this.map.scrollWheelZoom.disable();*/
-
                 const imageWidth = 700;
                 const imageHeight = 500;
                 const imageBounds = [[0, 0], [imageHeight, imageWidth]];
-                const imageUrl = '{{ asset('storage/reseau.png') }}';
+                const imageUrl = '{{ asset('storage/networks/' . $network->image) }}';
                 L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
                 this.map.fitBounds(imageBounds);
-
 
                 const deviceSelect = document.getElementById('device_id');
                 const overlayLayers = {};
@@ -67,6 +61,7 @@
 
                 L.control.layers(null, overlayLayers).addTo(this.map);
                 if (this.points && this.points.length > 0) {
+                    this.markers = {};
                     this.points.forEach(point => {
                         const { x, y, device } = point;
                         if (x !== undefined && y !== undefined && device) {
@@ -85,15 +80,20 @@
                                     <b>Status:</b> ${device.status}<br>
                                     <b>IP Address:</b> ${device.ip_address}<br>
                                     <b>Model:</b> ${device.model}<br>
-                                    <b>Serial Number:</b> ${device.serial_number}<br>
+                                    <b>Serial Number:</b> ${device.id}<br>
                                     <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
-                                    <b>icon:</b> ${device.icon}
+                                    <button wire:click="deletePoint(${point.id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                        Delete
+                                    </button>
+
                                 `;
                             marker.bindPopup(popupContent);
                             const layerKey = `${device.name} (${device.type})`;
                             if (overlayLayers[layerKey]) {
                                 overlayLayers[layerKey].addLayer(marker);
                             }
+
+                            this.markers[point.id] = marker;
 
                         }
                     });
@@ -128,7 +128,7 @@
                                     <b>IP Address:</b> ${device.ip_address}<br>
                                     <b>Model:</b> ${device.model}<br>
                                     <b>Serial Number:</b> ${device.serial_number}<br>
-                                    <b>Coordinates:</b> X: ${x}, Y: ${y}
+                                    <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
                                 `;
                         marker.bindPopup(popupContent);
                         const layerKey = `${device.name} (${device.type})`;
@@ -137,6 +137,14 @@
                         }
                     } else {
                         console.log("Coordinates are undefined!");
+                    }
+                });
+
+                Livewire.on('device-deleted', (data) => {
+                    const pointId = data[0].id
+                    if (this.markers[pointId]) {
+                        this.map.removeLayer(this.markers[pointId]);
+                        delete this.markers[pointId];
                     }
                 });
             }

@@ -1,11 +1,7 @@
-<header class="sticky top-0 bg-white dark:bg-[#182235] border-b border-slate-200 dark:border-slate-700 z-30">
+<header class="sticky top-0 bg-white dark:bg-[#182235] border-b border-slate-200 dark:border-slate-700 z-10">
     <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16 -mb-px">
-
-            <!-- Header: Left side -->
             <div class="flex">
-
-                <!-- Hamburger button -->
                 <button
                     class="text-slate-500 hover:text-slate-600 lg:hidden"
                     @click.stop="sidebarOpen = !sidebarOpen"
@@ -19,20 +15,15 @@
                         <rect x="4" y="17" width="16" height="2" />
                     </svg>
                 </button>
-
             </div>
 
-            <!-- Header: Right side -->
             <div class="flex items-center space-x-3">
-
                 <x-modal-search />
                 <x-dropdown-notifications align="right" />
                 <x-dropdown-help align="right" />
-
                 <x-theme-toggle />
                 <hr class="w-px h-6 bg-slate-200 dark:bg-slate-700 border-none" />
                 @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
-                   {{-- <x-dropdown-team align="right" />--}}
                 @endif
                 <x-dropdown-profile align="right" />
             </div>

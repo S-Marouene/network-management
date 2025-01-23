@@ -16,6 +16,7 @@ return new class extends Migration
             $table->decimal('x', 10, 2); // X coordinate
             $table->decimal('y', 10, 2); // Y coordinate
             $table->foreignId('device_id')->constrained('devices')->onDelete('cascade');
+            $table->foreignId('network_id')->constrained('networks')->onDelete('cascade');
             $table->timestamps(); // Created and updated timestamps
         });
     }
