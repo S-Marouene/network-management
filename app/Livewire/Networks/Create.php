@@ -32,6 +32,7 @@ class Create extends Component
             'name' => $this->name,
             'image' => $imageName ?? null,
             'description' => $this->description,
+            'user_id' => auth()->id(),
         ]);
         $this->reset();
         $this->dispatch('network-created');

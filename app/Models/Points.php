@@ -26,6 +26,7 @@ class Points extends Model
         'y',
         'device_id',
         'network_id',
+        'user_id',
     ];
 
     public function device()
@@ -41,6 +42,7 @@ class Points extends Model
     protected $casts = [
         'x' => 'decimal:2',
         'y' => 'decimal:2',
+
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
@@ -55,5 +57,10 @@ class Points extends Model
     public function scopeForNetwork($query, $networkId)
     {
         return $query->where('network_id', $networkId);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

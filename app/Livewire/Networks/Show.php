@@ -15,7 +15,7 @@ class Show extends Component
 
     public function mount()
     {
-        $this->networks = Networks::all();
+        $this->networks = Networks::where('user_id', auth()->id())->get();
     }
 
     public function render()
@@ -37,7 +37,7 @@ class Show extends Component
 
     public function refreshNetworks()
     {
-        $this->networks = Networks::all();
+        $this->networks = Networks::where('user_id', auth()->id())->get();
     }
     public function openModal()
     {

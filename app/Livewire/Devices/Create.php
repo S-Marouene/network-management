@@ -50,6 +50,7 @@ class Create extends Component
             'ip_address' => $this->ip_address,
             'model' => $this->model,
             'serial_number' => $this->serial_number,
+            'user_id' => auth()->id(),
         ]);
 
         // Reset the form

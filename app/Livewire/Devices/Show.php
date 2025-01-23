@@ -14,15 +14,23 @@ class Show extends Component
 
     public function render()
     {
-        $devices = Device::all();
+        $userId = auth()->id();
+        $devices = Device::where('user_id', $userId)->get();
         return view('livewire.devices.show', ['devices' => $devices]);
     }
 
 
     public function deleteDevice($id)
     {
-        Device::find($id)->delete();
-        session()->flash('message', 'Device deleted successfully.');
+        $device = Device::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+            if ($device) {
+                $device->delete();
+                session()->flash('message', 'Device deleted successfully.');
+            } else {
+                session()->flash('error', 'Device not found or you do not have permission to delete it.');
+            }
     }
 
     public function openModal()
@@ -37,6 +45,6 @@ class Show extends Component
 
     public function refreshDevices()
     {
-        $this->devices = Device::all();
+        $this->devices = Device::where('user_id', auth()->id())->get();
     }
 }

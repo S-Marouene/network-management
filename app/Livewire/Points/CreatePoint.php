@@ -17,7 +17,7 @@ class CreatePoint extends Component
     public function mount($networkId)
     {
         $this->network_id = $networkId;
-        $this->devices = Device::all();
+        $this->devices = Device::where('user_id', auth()->id())->get();
     }
 
     #[On('save-coordinates')]
@@ -40,6 +40,7 @@ class CreatePoint extends Component
                 'y' => $this->y,
                 'device_id' => $this->device_id,
                 'network_id' => $this->network_id,
+                'user_id' => auth()->id(),
             ]);
 
             $device = Device::find($this->device_id);

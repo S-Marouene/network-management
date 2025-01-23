@@ -25,7 +25,14 @@ class Networks extends Model
         'image',
         'name',
         'description',
+        'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
 
 }

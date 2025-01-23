@@ -18,5 +18,11 @@ class Device extends Model
         'ip_address',
         'model',
         'serial_number',
+        'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

@@ -66,4 +66,22 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Define the relationship with Network
+    public function networks()
+    {
+        return $this->hasMany(Networks::class);
+    }
+
+    // Define the relationship with Device
+    public function devices()
+    {
+        return $this->hasMany(Device::class);
+    }
+
+    // Define the relationship with Point
+    public function points()
+    {
+        return $this->hasMany(Points::class);
+    }
 }
