@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Networks;
 
+use App\Models\Device;
 use App\Models\Networks;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -25,9 +26,17 @@ class Show extends Component
 
     public function deleteNetwork($id)
     {
-        Networks::find($id)->delete();
-        $this->dispatch('network-deleted');
-        flash()->info('Network successfully deleted.');
+        $d = Networks::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+        if ($d) {
+            $d->delete();
+            $this->dispatch('network-deleted');
+            flash()->info('Network successfully deleted.');
+        } else {
+            session()->flash('error', 'Device not found or you do not have permission to delete it.');
+        }
+
     }
 
     protected $listeners = [

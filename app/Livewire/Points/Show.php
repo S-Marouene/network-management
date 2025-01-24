@@ -25,12 +25,18 @@ class Show extends Component
 
     public function deletePoint($id)
     {
-        $point = Points::find($id);
-        $point->delete();
-        $this->dispatch('device-deleted', [
-            'id' => $id,
-        ]);
-        flash()->info('Device successfully deleted.');
+        $d = Points::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+        if ($d) {
+            $d->delete();
+            $this->dispatch('device-deleted', [
+                'id' => $id,
+            ]);
+            flash()->info('Device successfully deleted.');
+        } else {
+            session()->flash('error', 'Device not found or you do not have permission to delete it.');
+        }
     }
 
 

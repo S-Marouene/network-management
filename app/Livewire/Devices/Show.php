@@ -27,7 +27,7 @@ class Show extends Component
             ->first();
             if ($device) {
                 $device->delete();
-                session()->flash('message', 'Device deleted successfully.');
+                flash()->info('Device deleted successfully.');
             } else {
                 session()->flash('error', 'Device not found or you do not have permission to delete it.');
             }
