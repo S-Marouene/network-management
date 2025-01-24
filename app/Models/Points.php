@@ -15,6 +15,8 @@ class Points extends Model
      * @var string
      */
     protected $table = 'points';
+    public $timestamps = true;
+
 
     /**
      * The attributes that are mass assignable.

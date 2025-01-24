@@ -41,6 +41,8 @@ class CreatePoint extends Component
                 'device_id' => $this->device_id,
                 'network_id' => $this->network_id,
                 'user_id' => auth()->id(),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             $device = Device::find($this->device_id);
