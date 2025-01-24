@@ -35,36 +35,88 @@
             initMap() {
                 this.map = L.map('map', {
                     crs: L.CRS.Simple,
-                    minZoom: 0,
-                    maxZoom: 1
+                    minZoom: -1,
+                    maxZoom: 3,
+                    zoomAnimation:false
                 });
-                const imageWidth = 700;
-                const imageHeight = 500;
-                const imageBounds = [[0, 0], [imageHeight, imageWidth]];
+
                 const imageUrl = '{{ asset('storage/networks/' . $network->image) }}';
-                L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
-                this.map.fitBounds(imageBounds);
+                const img = new Image();
 
-                const deviceSelect = document.getElementById('device_id');
-                const overlayLayers = {};
-                Array.from(deviceSelect.options).forEach(option => {
-                    if (option.value) {
-                        const match = option.text.match(/^(.*) \((.*)\)$/);
-                        if (match) {
-                            const name = match[1]; // Device name
-                            const type = match[2]; // Device type
-                            const layerKey = `${name} (${type})`; // Combine name and type for the layer key
-                            overlayLayers[layerKey] = L.layerGroup().addTo(this.map);
+                img.onload = () => {
+                    const imageWidth = img.naturalWidth;
+                    const imageHeight = img.naturalHeight;
+                    const imageBounds = [[0, 0], [imageHeight, imageWidth]];
+
+                    L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
+                    this.map.fitBounds(imageBounds);
+
+                    const deviceSelect = document.getElementById('device_id');
+                    const overlayLayers = {};
+                    Array.from(deviceSelect.options).forEach(option => {
+                        if (option.value) {
+                            const match = option.text.match(/^(.*) \((.*)\)$/);
+                            if (match) {
+                                const name = match[1]; // Device name
+                                const type = match[2]; // Device type
+                                const layerKey = `${name} (${type})`; // Combine name and type for the layer key
+                                overlayLayers[layerKey] = L.layerGroup().addTo(this.map);
+                            }
                         }
-                    }
-                });
+                    });
 
-                L.control.layers(null, overlayLayers).addTo(this.map);
-                if (this.points && this.points.length > 0) {
-                    this.markers = {};
-                    this.points.forEach(point => {
-                        const { x, y, device } = point;
-                        if (x !== undefined && y !== undefined && device) {
+                    L.control.layers(null, overlayLayers).addTo(this.map);
+
+                    if (this.points && this.points.length > 0) {
+                        this.markers = {};
+                        this.points.forEach(point => {
+                            const { x, y, device } = point;
+                            if (x !== undefined && y !== undefined && device) {
+                                if (!this.deviceIcons[device.icon]) {
+                                    this.deviceIcons[device.type] = L.icon({
+                                        iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
+                                        iconSize: [32, 32],
+                                        iconAnchor: [16, 32],
+                                    });
+                                }
+                                const marker = L.marker([x, y], { icon: this.deviceIcons[device.type] });
+                                const popupContent = `
+                                <b>Device Name:</b> ${device.name}<br>
+                                <b>Type:</b> ${device.type}<br>
+                                <b>Description:</b> ${device.description}<br>
+                                <b>Status:</b> ${device.status}<br>
+                                <b>IP Address:</b> ${device.ip_address}<br>
+                                <b>Model:</b> ${device.model}<br>
+                                <b>Serial Number:</b> ${device.id}<br>
+                                <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
+                                <button wire:click="deletePoint(${point.id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                    Delete
+                                </button>
+                            `;
+                                marker.bindPopup(popupContent);
+                                const layerKey = `${device.name} (${device.type})`;
+                                if (overlayLayers[layerKey]) {
+                                    overlayLayers[layerKey].addLayer(marker);
+                                }
+
+                                this.markers[point.id] = marker;
+                            }
+                        });
+                    }
+
+                    this.map.on('click', (e) => {
+                        const latLng = e.latlng;
+                        const x = latLng.lat.toFixed(2);
+                        const y = latLng.lng.toFixed(2);
+                        document.getElementById('x').value = x;
+                        document.getElementById('y').value = y;
+                        Livewire.dispatch('save-coordinates', { x: x, y: y });
+                    });
+
+                    Livewire.on('device-saved', (data) => {
+                        const deviceData = data[0];
+                        const { x, y, device } = deviceData;
+                        if (x !== undefined && y !== undefined) {
                             if (!this.deviceIcons[device.icon]) {
                                 this.deviceIcons[device.type] = L.icon({
                                     iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
@@ -74,79 +126,35 @@
                             }
                             const marker = L.marker([x, y], { icon: this.deviceIcons[device.type] });
                             const popupContent = `
-                                    <b>Device Name:</b> ${device.name}<br>
-                                    <b>Type:</b> ${device.type}<br>
-                                    <b>Description:</b> ${device.description}<br>
-                                    <b>Status:</b> ${device.status}<br>
-                                    <b>IP Address:</b> ${device.ip_address}<br>
-                                    <b>Model:</b> ${device.model}<br>
-                                    <b>Serial Number:</b> ${device.id}<br>
-                                    <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
-                                    <button wire:click="deletePoint(${point.id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                        Delete
-                                    </button>
-
-                                `;
+                            <b>Device Name:</b> ${device.name}<br>
+                            <b>Type:</b> ${device.type}<br>
+                            <b>Description:</b> ${device.description}<br>
+                            <b>Status:</b> ${device.status}<br>
+                            <b>IP Address:</b> ${device.ip_address}<br>
+                            <b>Model:</b> ${device.model}<br>
+                            <b>Serial Number:</b> ${device.serial_number}<br>
+                            <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
+                        `;
                             marker.bindPopup(popupContent);
                             const layerKey = `${device.name} (${device.type})`;
                             if (overlayLayers[layerKey]) {
                                 overlayLayers[layerKey].addLayer(marker);
                             }
-
-                            this.markers[point.id] = marker;
-
+                        } else {
+                            console.log("Coordinates are undefined!");
                         }
                     });
-                }
 
-                this.map.on('click', (e) => {
-                    const latLng = e.latlng;
-                    const x = latLng.lat.toFixed(2);
-                    const y = latLng.lng.toFixed(2);
-                    document.getElementById('x').value = x;
-                    document.getElementById('y').value = y;
-                    Livewire.dispatch('save-coordinates', { x: x, y: y });
-                });
-
-                Livewire.on('device-saved', (data) => {
-                    const deviceData = data[0];
-                    const {x, y, device} = deviceData;
-                    if (x !== undefined && y !== undefined) {
-                        if (!this.deviceIcons[device.icon]) {
-                            this.deviceIcons[device.type] = L.icon({
-                                iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
-                                iconSize: [32, 32],
-                                iconAnchor: [16, 32],
-                            });
+                    Livewire.on('device-deleted', (data) => {
+                        const pointId = data[0].id;
+                        if (this.markers[pointId]) {
+                            this.map.removeLayer(this.markers[pointId]);
+                            delete this.markers[pointId];
                         }
-                        const marker = L.marker([x, y], { icon: this.deviceIcons[device.type] });
-                        const popupContent = `
-                                    <b>Device Name:</b> ${device.name}<br>
-                                    <b>Type:</b> ${device.type}<br>
-                                    <b>Description:</b> ${device.description}<br>
-                                    <b>Status:</b> ${device.status}<br>
-                                    <b>IP Address:</b> ${device.ip_address}<br>
-                                    <b>Model:</b> ${device.model}<br>
-                                    <b>Serial Number:</b> ${device.serial_number}<br>
-                                    <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
-                                `;
-                        marker.bindPopup(popupContent);
-                        const layerKey = `${device.name} (${device.type})`;
-                        if (overlayLayers[layerKey]) {
-                            overlayLayers[layerKey].addLayer(marker);
-                        }
-                    } else {
-                        console.log("Coordinates are undefined!");
-                    }
-                });
+                    });
+                };
 
-                Livewire.on('device-deleted', (data) => {
-                    const pointId = data[0].id
-                    if (this.markers[pointId]) {
-                        this.map.removeLayer(this.markers[pointId]);
-                        delete this.markers[pointId];
-                    }
-                });
+                img.src = imageUrl; // Load the image to get its dimensions
             }
         };
     }

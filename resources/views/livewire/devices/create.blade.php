@@ -57,8 +57,9 @@
             <button type="button" @click="$dispatch('close-modal')" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md mr-2">
                 Cancel
             </button>
-            <x-button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
-                Save Device
+            <x-button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md" wire:loading.attr="disabled">
+                <span wire:loading.remove>Save Device</span>
+                <span wire:loading>Uploading...</span>
             </x-button>
         </div>
     </form>
