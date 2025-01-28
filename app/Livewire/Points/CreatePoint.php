@@ -14,7 +14,7 @@ class CreatePoint extends Component
     public $network_id;
     public $devices;
 
-    public function mount($networkId)
+    public function mount($networkId): void
     {
         $this->network_id = $networkId;
         $this->devices = Device::where('user_id', auth()->id())->get();
@@ -35,7 +35,7 @@ class CreatePoint extends Component
             'device_id' => 'required|exists:devices,id',
             'network_id' => 'required|exists:networks,id',
         ]);
-            $point = Points::insert([
+            $point = Points::create([
                 'x' => $this->x,
                 'y' => $this->y,
                 'device_id' => $this->device_id,
@@ -44,21 +44,30 @@ class CreatePoint extends Component
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
             $device = Device::find($this->device_id);
-
             $this->dispatch('device-saved', [
                 'x' => $this->x,
                 'y' => $this->y,
                 'device' => $device,
+                'pointId' => $point->id,
             ]);
             $this->reset(['x', 'y', 'device_id']);
             flash()->success('Device saved successfully.');
-
-
     }
 
-
+    #[On('update-marker-position')]
+    public function updateMarkerPosition($pointId, $x, $y): void
+    {
+        $point = Points::find($pointId);
+        if ($point) {
+            $point->update([
+                'x' => $x,
+                'y' => $y,
+            ]);
+        }
+        flash()->success('Device moved ! new position saved  successfully.');
+        $this->dispatch('marker-Position-Updated');
+    }
 
     public function render()
     {
