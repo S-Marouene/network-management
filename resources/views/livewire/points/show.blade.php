@@ -40,7 +40,7 @@
         }
     </style>
     <div>
-        <div class="container mx-auto p-4">
+        <div class="container mx-auto p-4" wire:ignore>
             <h1 class="text-xl font-bold">{{ $network->name }}</h1>
             <p>{{ $network->description }}</p>
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -119,7 +119,7 @@
                                 if (!this.deviceIcons[device.icon]) {
                                     this.deviceIcons[device.type] = L.icon({
                                         iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
-                                        iconSize: [32, 32],
+                                        iconSize: [20, 20],
                                         iconAnchor: [16, 32],
                                     });
                                 }
@@ -203,6 +203,9 @@
                             <b>Model:</b> ${device.model}<br>
                             <b>Serial Number:</b> ${device.serial_number}<br>
                             <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
+                            <button wire:click="deletePoint(${data[0].id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                                Delete
+                            </button>
                         `;
                             marker.bindPopup(popupContent);
                             const layerKey = `${device.name} (${device.type})`;

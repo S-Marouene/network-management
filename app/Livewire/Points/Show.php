@@ -15,7 +15,7 @@ class Show extends Component
     public $networkId;
     public $network;
 
-    public function mount($id)
+    public function mount($id): void
     {
         $this->network = Networks::findOrFail($id);
         $this->points = Points::forNetwork($this->network->id)
@@ -23,7 +23,7 @@ class Show extends Component
             ->with('device')->get();
     }
 
-    public function deletePoint($id)
+    public function deletePoint($id): void
     {
         $d = Points::where('id', $id)
             ->where('user_id', auth()->id())
