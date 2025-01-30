@@ -29,6 +29,7 @@ class Points extends Model
         'device_id',
         'network_id',
         'user_id',
+        'size'
     ];
 
     public function device()

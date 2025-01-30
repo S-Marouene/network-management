@@ -71,6 +71,35 @@
             positionUpdated: false,
         });
     });
+
+    function GeneratePopup(device, point, x, y) {
+        const size = point.size.toString();
+        return `
+        <b>Device Name:</b> ${device.name}<br>
+        <b>Type:</b> ${device.type}<br>
+        <b>Description:</b> ${device.description}<br>
+        <b>Status:</b> ${device.status}<br>
+        <b>IP Address:</b> ${device.ip_address}<br>
+        <b>Model:</b> ${device.model}<br>
+        <b>Serial Number:</b> ${point.size}<br>
+        <b>Coordinates:</b> X: ${x}, Y: ${y}<br><br>
+        <div>
+            <label>
+                <input type="radio" name="size" value="15" ${size === '15' ? 'checked' : ''} wire:click="updateSize(${point.id}, 15)"> Small
+            </label>
+            <label>
+                <input type="radio" name="size" value="22" ${size === '22' ? 'checked' : ''} wire:click="updateSize(${point.id}, 22)"> Big
+            </label>
+            <label>
+                <input type="radio" name="size" value="42" ${size === '42' ? 'checked' : ''} wire:click="updateSize(${point.id}, 42)"> Very Big
+            </label>
+        </div><br>
+        <button wire:click="deletePoint(${point.id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Delete
+        </button>
+    `;
+    }
+
     function mapComponent() {
         return {
             map: null,
@@ -79,24 +108,25 @@
             initMap() {
                 this.map = L.map('map', {
                     crs: L.CRS.Simple,
-                    minZoom: -1,
+                    minZoom: 0,
                     maxZoom: 3,
+                    fullscreenControl: true,
                     zoomAnimation:false
                 });
 
                 const imageUrl = '{{ asset('storage/networks/' . $network->image) }}';
                 const img = new Image();
+                const overlayLayers = {};
+                img.src = imageUrl;
+
 
                 img.onload = () => {
                     const imageWidth = img.naturalWidth;
                     const imageHeight = img.naturalHeight;
                     const imageBounds = [[0, 0], [imageHeight, imageWidth]];
-
                     L.imageOverlay(imageUrl, imageBounds).addTo(this.map);
                     this.map.fitBounds(imageBounds);
-
                     const deviceSelect = document.getElementById('device_id');
-                    const overlayLayers = {};
                     Array.from(deviceSelect.options).forEach(option => {
                         if (option.value) {
                             const match = option.text.match(/^(.*) \((.*)\)$/);
@@ -108,9 +138,7 @@
                             }
                         }
                     });
-
                     L.control.layers(null, overlayLayers).addTo(this.map);
-
                     if (this.points && this.points.length > 0) {
                         this.markers = {};
                         this.points.forEach(point => {
@@ -119,30 +147,17 @@
                                 if (!this.deviceIcons[device.icon]) {
                                     this.deviceIcons[device.type] = L.icon({
                                         iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
-                                        iconSize: [20, 20],
+                                        iconSize: [point.size, point.size],
                                         iconAnchor: [16, 32],
                                     });
                                 }
                                 const marker = L.marker([x, y], { icon: this.deviceIcons[device.type],draggable: 'true' });
-                                const popupContent = `
-                                <b>Device Name:</b> ${device.name}<br>
-                                <b>Type:</b> ${device.type}<br>
-                                <b>Description:</b> ${device.description}<br>
-                                <b>Status:</b> ${device.status}<br>
-                                <b>IP Address:</b> ${device.ip_address}<br>
-                                <b>Model:</b> ${device.model}<br>
-                                <b>Serial Number:</b> ${device.id}<br>
-                                <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
-                                <button wire:click="deletePoint(${point.id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                    Delete
-                                </button>
-                            `;
+                                const popupContent = GeneratePopup(device, point, x, y);
                                 marker.bindPopup(popupContent);
                                 const layerKey = `${device.name} (${device.type})`;
                                 if (overlayLayers[layerKey]) {
                                     overlayLayers[layerKey].addLayer(marker);
                                 }
-
                                 marker.on('dragend', (event) => {
                                     const newLatLng = event.target.getLatLng();
                                     const newX = newLatLng.lat.toFixed(2);
@@ -158,83 +173,81 @@
                             }
                         });
                     }
-
-                    this.map.on('click', (e) => {
-                        const latLng = e.latlng;
-                        const x = latLng.lat.toFixed(2);
-                        const y = latLng.lng.toFixed(2);
-                        document.getElementById('x').value = x;
-                        document.getElementById('y').value = y;
-                        Livewire.dispatch('save-coordinates', { x: x, y: y });
-                    });
-
-                    Livewire.on('device-saved', (data) => {
-                        const deviceData = data[0];
-                        console.log(deviceData);
-
-                        const { x, y, device,pointId } = deviceData;
-                        if (x !== undefined && y !== undefined) {
-                            if (!this.deviceIcons[device.icon]) {
-                                this.deviceIcons[device.type] = L.icon({
-                                    iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
-                                    iconSize: [32, 32],
-                                    iconAnchor: [16, 32],
-                                });
-                            }
-                            const marker = L.marker([x, y], { icon: this.deviceIcons[device.type],draggable: 'true' });
-
-                            marker.on('dragend', (event) => {
-                                const newLatLng = event.target.getLatLng();
-                                const newX = newLatLng.lat.toFixed(2);
-                                const newY = newLatLng.lng.toFixed(2);
-                                Livewire.dispatch('update-marker-position', {
-                                    pointId: pointId,
-                                    x: newX,
-                                    y: newY
-                                });
-                                window.dispatchEvent(new CustomEvent('drag-end'));
-                            });
-                            const popupContent = `
-                            <b>Device Name:</b> ${device.name}<br>
-                            <b>Type:</b> ${device.type}<br>
-                            <b>Description:</b> ${device.description}<br>
-                            <b>Status:</b> ${device.status}<br>
-                            <b>IP Address:</b> ${device.ip_address}<br>
-                            <b>Model:</b> ${device.model}<br>
-                            <b>Serial Number:</b> ${device.serial_number}<br>
-                            <b>Coordinates:</b> X: ${x}, Y: ${y}<br>
-                            <button wire:click="deletePoint(${data[0].id})" style="margin-top: 10px; padding: 5px 10px; background: red; color: white; border: none; border-radius: 4px; cursor: pointer;">
-                                Delete
-                            </button>
-                        `;
-                            marker.bindPopup(popupContent);
-                            const layerKey = `${device.name} (${device.type})`;
-                            if (overlayLayers[layerKey]) {
-                                overlayLayers[layerKey].addLayer(marker);
-                            }
-                        } else {
-                            console.log("Coordinates are undefined!");
-                        }
-                    });
-
-                    Livewire.on('device-deleted', (data) => {
-                        const pointId = data[0].id;
-                        if (this.markers[pointId]) {
-                            this.map.removeLayer(this.markers[pointId]);
-                            delete this.markers[pointId];
-                        }
-                    });
                 };
-                img.src = imageUrl;
+
+                Livewire.on('device-saved', (data) => {
+                    const deviceData = data[0];
+                    const { x, y, device,point } = deviceData;
+                    if (x !== undefined && y !== undefined) {
+                        if (!this.deviceIcons[device.icon]) {
+                            this.deviceIcons[device.type] = L.icon({
+                                iconUrl: '{{ asset('storage/icons/') }}/' + device.icon,
+                                iconSize: [point.size, point.size],
+                                iconAnchor: [16, 32],
+                            });
+                        }
+                        const marker = L.marker([x, y], { icon: this.deviceIcons[device.type],draggable: 'true' });
+                        marker.on('dragend', (event) => {
+                            const newLatLng = event.target.getLatLng();
+                            const newX = newLatLng.lat.toFixed(2);
+                            const newY = newLatLng.lng.toFixed(2);
+                            Livewire.dispatch('update-marker-position', {
+                                pointId: point.id,
+                                x: newX,
+                                y: newY
+                            });
+                            window.dispatchEvent(new CustomEvent('drag-end'));
+                        });
+                        this.markers[point.id] = marker;
+                        const popupContent = GeneratePopup(device, point, x, y);
+                        marker.bindPopup(popupContent);
+
+                        const layerKey = `${device.name} (${device.type})`;
+                        if (overlayLayers[layerKey]) {
+                            overlayLayers[layerKey].addLayer(marker);
+                        }
+                    } else {
+                        console.log("Coordinates are undefined!");
+                    }
+                });
+
+                Livewire.on('device-deleted', (data) => {
+                    const pointId = data[0].id;
+                    if (this.markers[pointId]) {
+                        this.map.removeLayer(this.markers[pointId]);
+                        delete this.markers[pointId];
+                    }
+                });
+
+                Livewire.on('refresh-markers', (data) => {
+                    const { x, y, device, point } = data[0];
+                    if (this.markers[point.id]) {
+                        var icon = this.markers[point.id].options.icon;
+                        icon.options.iconSize = [point.size, point.size];
+                        this.markers[point.id].setIcon(icon);
+                        const popupContent = GeneratePopup(device, point, x, y);
+                        this.markers[point.id].bindPopup(popupContent);
+                        $(".leaflet-popup-close-button")[0].click();
+                    }
+                });
+
+                this.map.on('click', (e) => {
+                    const latLng = e.latlng;
+                    const x = latLng.lat.toFixed(2);
+                    const y = latLng.lng.toFixed(2);
+                    document.getElementById('x').value = x;
+                    document.getElementById('y').value = y;
+                    Livewire.dispatch('save-coordinates', { x: x, y: y });
+                });
             }
         };
     }
+
 </script>
 @script
     <script>
         $wire.on('marker-Position-Updated', () => {
             Alpine.store('marker').positionUpdated = true;
-            console.log('post created');
         });
     </script>
 @endscript

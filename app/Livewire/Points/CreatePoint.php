@@ -13,11 +13,13 @@ class CreatePoint extends Component
     public $device_id;
     public $network_id;
     public $devices;
+    public $size;
 
     public function mount($networkId): void
     {
         $this->network_id = $networkId;
         $this->devices = Device::where('user_id', auth()->id())->get();
+        $this->size = "15";
     }
 
     #[On('save-coordinates')]
@@ -34,6 +36,7 @@ class CreatePoint extends Component
             'y' => 'required|numeric',
             'device_id' => 'required|exists:devices,id',
             'network_id' => 'required|exists:networks,id',
+            'size' => 'required',
         ]);
             $point = Points::create([
                 'x' => $this->x,
@@ -41,6 +44,7 @@ class CreatePoint extends Component
                 'device_id' => $this->device_id,
                 'network_id' => $this->network_id,
                 'user_id' => auth()->id(),
+                'size' => $this->size, // Add this line
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -49,7 +53,7 @@ class CreatePoint extends Component
                 'x' => $this->x,
                 'y' => $this->y,
                 'device' => $device,
-                'pointId' => $point->id,
+                'point' => $point,
             ]);
             $this->reset(['x', 'y', 'device_id']);
             flash()->success('Device saved successfully.');
@@ -68,6 +72,10 @@ class CreatePoint extends Component
         flash()->success('Device moved ! new position saved  successfully.');
         $this->dispatch('marker-Position-Updated');
     }
+
+
+
+
 
     public function render()
     {

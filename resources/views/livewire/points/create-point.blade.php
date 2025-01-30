@@ -34,6 +34,26 @@
                 @endforeach
             </select>
         </div>
+
+        <!-- Add Radio Buttons for Device Size -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Device Size:</label>
+            <div class="mt-1 space-x-4">
+                <label class="inline-flex items-center">
+                    <input type="radio" wire:model="size" value="15" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out" checked>
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">Small</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" wire:model="size" value="22" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">Big</span>
+                </label>
+                <label class="inline-flex items-center">
+                    <input type="radio" wire:model="size" value="42" class="form-radio h-4 w-4 text-indigo-600 transition duration-150 ease-in-out">
+                    <span class="ml-2 text-gray-700 dark:text-gray-300">Very Big</span>
+                </label>
+            </div>
+        </div>
+
         <div class="mt-4">
             <button
                 wire:click="saveDevice"
